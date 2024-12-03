@@ -126,6 +126,28 @@ Hasil dari heatmap menunjukkan bahwa diabetes (outcome) memiliki korelasi yang s
 | Age |	0 |
 | Outcome |	0 |
 <br>
+### Penanganan Nilai Kosong pada Dataset
+Penanganan nilai kosong atau data yang hilang sangat penting dalam proses data preparation, terutama pada dataset yang digunakan untuk machine learning. Dalam kasus dataset yang saya gunakan, nilai 0 pada beberapa fitur seperti Glucose, BloodPressure, BMI, dll., dianggap tidak wajar karena secara medis, nilai tersebut tidak mungkin bernilai nol pada manusia yang sehat atau sakit. Berikut penjelasannya:
+| Fitur                  | Penjelasan                                                                                         |
+|------------------------|---------------------------------------------------------------------------------------------------|
+| **Glucose**            | Nilai nol menunjukkan tidak ada gula dalam darah, yang tidak mungkin terjadi pada manusia hidup.  |
+| **BloodPressure**      | Nilai nol berarti tidak ada tekanan darah, yang juga tidak masuk akal.                            |
+| **BMI**                | Nilai nol menunjukkan berat badan atau tinggi badan tidak ada, yang tidak realistis.             |
+| **Insulin**            | Nilai nol bisa berarti pasien tidak mengonsumsi insulin, tetapi sering kali dianggap sebagai data yang hilang. |
+<br>
+Nilai-nilai tersebut harus diatasi untuk memastikan kualitas data yang digunakan dalam pelatihan model. Beberapa metode yang dapat digunakan meliputi:
+1. **Mengganti Nilai Kosong dengan Statistik Dasar:**
+   - **Mean:** Menggunakan nilai rata-rata untuk menggantikan nilai kosong (cocok untuk data kontinu seperti `Glucose`, `BloodPressure`, dll.).
+   - **Median:** Menggunakan nilai tengah, terutama jika terdapat *outlier* yang signifikan.
+
+2. **Intervensi Domain-Specific:**
+   - Mengganti nilai dengan estimasi yang relevan berdasarkan saran ahli atau logika domain tertentu.
+
+3. **Menghapus Data Kosong:**
+   - Jika proporsi data kosong sangat kecil dan tidak memengaruhi hasil secara signifikan, data tersebut dapat dihapus.
+Pada dataset yg digunakan, langkah ini membantu memastikan bahwa model tidak belajar dari data yang salah atau bias akibat nilai nol yang tidak wajar dan memastikan bahwa data yang digunakan dalam pelatihan model memiliki kualitas tinggi dan mendukung proses machine learning yang akurat.
+
+
   Tahapan ini bertujuan untuk mengisi data yang tidak lengkap atau data kosong. 
 
 - Balancing Dataset <br>
