@@ -79,7 +79,7 @@ Dari data ini, dapat disimpulkan bahwa sebagian besar pengguna memberikan rating
 
 ### **Distribusi Rating**
 
-![Gambar distribusi rating pada dataset MovieLens](https://github.com/hilmiyatulasna/Proyek-Akhir-Membuat-Model-Sistem-Rekomendasi/blob/main/img/distribusi_rating.png?raw=true)
+![Distribusi Rating](img/distribusi_rating.png)
 
 **Gambar 1. Distribusi rating**
 
@@ -87,7 +87,7 @@ Visualisasi pada Gambar 1 menunjukkan distribusi rating pada dataset MovieLens. 
 
 ### **Frekuensi Genre Film**
 
-![Gambar frekuensi genre film](https://github.com/hilmiyatulasna/Proyek-Akhir-Membuat-Model-Sistem-Rekomendasi/blob/main/img/frekuensi_genre.png?raw=true)
+![frekuensi genre](img/frekuensi_genre.png)
 
 **Gambar 2. Frekuensi genre film**
 
@@ -99,7 +99,7 @@ Visualisasi pada Gambar 2 menunjukkan frekuensi genre film dalam dataset MovieLe
 
 ### **Korelasi Rating dan Genre Film**
 
-![Gambar korelasi rating dan genre film](https://github.com/hilmiyatulasna/Proyek-Akhir-Membuat-Model-Sistem-Rekomendasi/blob/main/img/korelasi_rating_genre.png?raw=true)
+![korelasi rating genre](img/korelasi_rating_genre.png)
 
 **Gambar 3. Korelasi rating dan genre film**
 
@@ -111,7 +111,7 @@ Visualisasi dan analisis rating rata-rata per genre film pada Gambar 3 menunjukk
 
 ### **Tag Paling Populer**
 
-![Gambar tag paling populer](https://github.com/hilmiyatulasna/Proyek-Akhir-Membuat-Model-Sistem-Rekomendasi/blob/main/img/tag.png?raw=true)
+![tag paling populer](img/tag.png)
 
 **Gambar 4. Tag paling populer**
 
@@ -247,7 +247,7 @@ Selama pelatihan, model dijalankan melalui beberapa epoch, di mana setiap epoch 
 - **Peningkatan Akurasi Prediksi**: Penurunan RMSE menunjukkan bahwa model semakin baik dalam memprediksi rating.
 - **Deteksi Overfitting**: Jika Validation Loss meningkat sementara Training Loss terus menurun, ini menandakan model overfitting dan performa pada data validasi mulai menurun.
 
-![Gambar hasil training dan validasi](https://github.com/hilmiyatulasna/Proyek-Akhir-Membuat-Model-Sistem-Rekomendasi/blob/main/img/train_val_vis.png?raw=true)
+![hasil training dan validasi](img/train_val_vis.png)
 
 Gambar 5. Visualisasi metrik training dan loss validasi
 
