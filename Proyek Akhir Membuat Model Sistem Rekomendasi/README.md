@@ -1,20 +1,39 @@
 # Laporan Proyek Machine Learning
 oleh Hilmiyatul Asna
+---
+## Project Overview
 
-## Pendahuluan
+Dalam era digital saat ini, sistem rekomendasi menjadi salah satu teknologi yang sangat penting dalam meningkatkan pengalaman pengguna. Banyak platform, seperti layanan streaming film, e-commerce, dan media sosial, menggunakan sistem ini untuk menyarankan konten atau produk yang relevan. Sistem rekomendasi tidak hanya membantu pengguna menemukan item yang sesuai dengan minat mereka, tetapi juga meningkatkan keterlibatan pengguna dan nilai bisnis.
 
-Dalam era digital, sistem rekomendasi telah menjadi elemen penting dalam meningkatkan keterlibatan pengguna dan personalisasi layanan di berbagai platform online. Keberhasilan rekomendasi yang relevan dan personal sangat ditentukan oleh efektivitas algoritma yang digunakan. Dua pendekatan utama yang sering dibahas dalam penelitian adalah *content-based filtering* dan *collaborative filtering*.  
+Namun, merancang sistem rekomendasi yang efektif bukan tanpa tantangan. Dua pendekatan utama yang sering digunakan adalah **content-based filtering** dan **collaborative filtering**.  
+- **Content-based filtering** berfokus pada analisis atribut item untuk merekomendasikan konten yang mirip dengan preferensi sebelumnya dari pengguna.  
+- **Collaborative filtering** memanfaatkan data preferensi pengguna lain untuk menemukan kesamaan pola perilaku, sehingga dapat merekomendasikan item yang mungkin disukai.  
 
-Pendekatan *content-based filtering* berfokus pada atribut atau karakteristik item, di mana sistem merekomendasikan item yang mirip dengan yang sudah disukai oleh pengguna sebelumnya. Sebaliknya, *collaborative filtering* memanfaatkan preferensi pengguna lain, dengan asumsi bahwa individu dengan kesukaan yang serupa cenderung menyukai item yang sama.  
+### Masalah dan Latar Belakang
+Proyek ini dilatarbelakangi oleh tantangan yang dihadapi banyak platform dalam memberikan rekomendasi yang relevan akibat beberapa faktor berikut:  
 
-Dalam studi ini, dataset MovieLens, yang berisi kumpulan besar penilaian dan tag film, digunakan sebagai studi kasus untuk mengevaluasi dan membandingkan efektivitas kedua metode tersebut. Dataset ini memberikan peluang untuk menilai tidak hanya akurasi rekomendasi, tetapi juga kemampuan sistem dalam mengatasi tantangan seperti masalah *cold start* dan *sparsity*. Penelitian ini memiliki signifikansi karena dapat membantu meningkatkan pengalaman pengguna di berbagai platform, memastikan konten yang direkomendasikan relevan dengan preferensi pengguna.  
+#### 1. Masalah Cold Start  
+Ketika pengguna baru bergabung, mereka belum memiliki cukup riwayat interaksi untuk membantu sistem menghasilkan rekomendasi yang personal. Hal ini sering menjadi hambatan dalam pendekatan content-based filtering maupun collaborative filtering.  
 
-Penelitian sebelumnya menunjukkan berbagai teknik dan metode yang telah dikembangkan untuk meningkatkan performa sistem rekomendasi, namun masih terdapat ruang untuk pengembangan lebih lanjut. Tantangan seperti personalisasi yang lebih baik, penanganan data yang tidak lengkap, dan peningkatan skala sistem masih memerlukan solusi inovatif.  
+#### 2. Masalah Sparsity  
+Dataset sistem rekomendasi sering kali sangat sparse, di mana sebagian besar pengguna hanya memberikan beberapa rating dibandingkan dengan jumlah item yang tersedia. Hal ini menyebabkan sulitnya menemukan pola hubungan yang signifikan.  
 
-Proyek ini bertujuan untuk mengeksplorasi secara mendalam keunggulan dan kelemahan *content-based filtering* dibandingkan dengan *collaborative filtering* menggunakan dataset MovieLens sebagai studi kasus. Dengan membandingkan kedua pendekatan dalam skenario nyata, penelitian ini diharapkan dapat memberikan kontribusi signifikan dalam merancang sistem rekomendasi yang lebih akurat, personal, dan mampu mengatasi berbagai kendala yang ada di bidang ini.
+#### 3. Relevansi yang Kurang Personal  
+Beberapa sistem rekomendasi gagal menghasilkan saran yang cukup personal karena tidak memanfaatkan secara optimal hubungan antar data pengguna dan karakteristik item.  
 
-## Business Understanding
+Dataset **MovieLens** dipilih untuk penelitian ini karena menyediakan kumpulan besar data rating film oleh pengguna yang beragam. Dataset ini memberikan peluang untuk mengevaluasi efektivitas kedua metode dalam mengatasi masalah di atas.
 
+### Alasan Pemilihan Masalah
+1. Sistem rekomendasi yang kurang efektif dapat menyebabkan pengalaman pengguna yang buruk, seperti rekomendasi yang tidak relevan, membosankan, atau bahkan tidak berguna.  
+2. Meningkatkan akurasi dan personalisasi rekomendasi adalah kebutuhan yang mendesak bagi banyak platform untuk mempertahankan dan meningkatkan jumlah pengguna mereka.  
+3. Dengan membandingkan content-based filtering dan collaborative filtering menggunakan dataset yang nyata, seperti MovieLens, penelitian ini diharapkan dapat memberikan wawasan baru tentang penerapan kedua metode dalam skenario dunia nyata.
+
+### Tujuan Penelitian
+Proyek ini bertujuan untuk:  
+1. Mengeksplorasi keunggulan dan kelemahan pendekatan content-based filtering dan collaborative filtering.  
+2. Mengidentifikasi metode yang paling efektif dalam mengatasi tantangan **cold start** dan **sparsity**.  
+3. Memberikan rekomendasi praktis bagi pengembang sistem rekomendasi tentang strategi terbaik untuk meningkatkan akurasi dan personalisasi rekomendasi.  
+---
 # Business Understanding
 
 ## Problem Statements
@@ -34,16 +53,57 @@ Untuk mencapai tujuan ini, solusi yang diusulkan melibatkan langkah-langkah beri
 1. Melakukan analisis eksploratif data (EDA) untuk memahami distribusi rating dan karakteristik film dalam dataset MovieLens.
 2. Menerapkan content-based filtering dengan memanfaatkan fitur konten film seperti genre dan tag.
 3. Menerapkan collaborative filtering dengan memanfaatkan data rating yang diberikan oleh pengguna.
-
+---
 # Data Understanding
 
 Dataset yang digunakan dalam proyek ini adalah **MovieLens**, yang mencakup 100.836 rating dan 3.683 tag dari 9.742 film yang diberikan oleh 610 pengguna selama periode 29 Maret 1996 hingga 24 September 2018. Dataset ini dapat diunduh di [MovieLens Dataset](https://grouplens.org/datasets/movielens/).
 
-Dataset ini terdiri dari beberapa file, yaitu:
-- `ratings.csv`: userId, movieId, rating, timestamp
-- `tags.csv`: userId, movieId, tag, timestamp
-- `movies.csv`: movieId, title, genres
-- `links.csv`: movieId, imdbId, tmdbId
+Dataset ini terdiri dari beberapa file berikut:  
+
+## 1. `ratings.csv`  
+File ini berisi data penilaian film oleh pengguna.  
+- **Jumlah data**: 100.836 baris dan 4 kolom.  
+- **Kondisi data**: Tidak terdapat missing values atau duplikasi.  
+- **Fitur-fitur**:  
+  - `userId`: ID unik pengguna.  
+  - `movieId`: ID unik film yang diberi rating.  
+  - `rating`: Rating yang diberikan pengguna (skala 0,5 hingga 5,0).  
+  - `timestamp`: Waktu saat rating diberikan (dalam format UNIX timestamp).  
+
+## 2. `tags.csv`  
+File ini berisi data tag yang ditambahkan pengguna pada film.  
+- **Jumlah data**: 3.683 baris dan 4 kolom.  
+- **Kondisi data**: Tidak terdapat missing values atau duplikasi.  
+- **Fitur-fitur**:  
+  - `userId`: ID unik pengguna.  
+  - `movieId`: ID unik film yang diberi tag.  
+  - `tag`: Tag yang diberikan pengguna.  
+  - `timestamp`: Waktu saat tag ditambahkan (dalam format UNIX timestamp).  
+
+## 3. `movies.csv`  
+File ini berisi daftar film beserta genre-nya.  
+- **Jumlah data**: 9.742 baris dan 3 kolom.  
+- **Kondisi data**: Tidak terdapat missing values, tetapi ada film dengan genre `(no genres listed)`.  
+- **Fitur-fitur**:  
+  - `movieId`: ID unik film.  
+  - `title`: Judul film (termasuk tahun rilis dalam tanda kurung).  
+  - `genres`: Daftar genre yang dipisahkan dengan tanda "|".  
+
+## 4. `links.csv`  
+File ini berisi ID yang menghubungkan film dalam MovieLens dengan basis data eksternal seperti IMDb dan TMDb.  
+- **Jumlah data**: 9.742 baris dan 3 kolom.  
+- **Kondisi data**: Beberapa entri memiliki missing values pada kolom `imdbId` dan `tmdbId`.  
+- **Fitur-fitur**:  
+  - `movieId`: ID unik film di MovieLens.  
+  - `imdbId`: ID unik film di IMDb.  
+  - `tmdbId`: ID unik film di TMDb.  
+
+## Tautan Sumber Data  
+Dataset ini dapat diakses melalui [MovieLens Dataset](https://grouplens.org/datasets/movielens/).
+
+## Kesimpulan Awal  
+Dataset ini bersih dari duplikasi, tetapi memiliki beberapa kekurangan seperti genre `(no genres listed)` pada `movies.csv` dan missing values pada kolom `imdbId` dan `tmdbId` di `links.csv`. Dataset ini mencakup informasi yang kaya untuk membangun sistem rekomendasi berbasis rating, tag, dan genre.
+
 
 ## **Analisis Univariate dan Multivariate**
 
@@ -74,8 +134,6 @@ Berikut adalah interpretasi dari statistik rating:
 - **Modus**: 4.0
 
 Dari data ini, dapat disimpulkan bahwa sebagian besar pengguna memberikan rating tinggi, dengan rata-rata sekitar 3.5 dan modus pada nilai 4.0. Distribusi rating menunjukkan adanya kecenderungan pengguna untuk memberikan rating positif, dengan sedikit kecenderungan ke arah rating yang lebih tinggi.
-
-## Data Understanding
 
 ### **Distribusi Rating**
 
@@ -137,56 +195,91 @@ Visualisasi dan daftar 20 tag paling populer pada Gambar 4 menunjukkan:
 | Braveheart (1995)                                      | 237           | 4.03             |
 | Terminator 2: Judgment Day (1991)                       | 224           | 3.97             |
 | Schindler's List (1993)                                | 220           | 4.23             |
-
+---
 ## Data Preparation
 
 Tahapan data preparation dalam eksperimen sistem rekomendasi menggunakan dataset MovieLens pada proyek ini mencakup langkah-langkah berikut untuk mempersiapkan dan memproses data sesuai kebutuhan analisis dan pemodelan:
 
 1. **Menggabungkan Data Movies dengan Tags**  
-   Data dari tabel `movies` dan `tags` digabungkan berdasarkan `movieId`. Untuk film yang tidak memiliki tag, nilai NaN pada kolom tag digantikan dengan string kosong. Penggabungan ini bertujuan untuk memperkaya informasi setiap film dengan detail tambahan dari tag, sehingga memungkinkan sistem rekomendasi berbasis konten untuk lebih akurat dalam menilai kesamaan antar film berdasarkan konten dan preferensi pengguna.
+   - Data dari tabel `movies` dan `tags` digabungkan berdasarkan `movieId`.  
+   - Film yang tidak memiliki tag akan memiliki nilai kosong pada kolom `tag`. Nilai ini digantikan dengan string kosong (`""`).  
+   - Tujuan penggabungan ini adalah memperkaya informasi konten setiap film dengan tambahan data tag untuk mendukung sistem rekomendasi berbasis konten.  
 
 2. **Membuat Kolom Combined Features**  
-   Kolom `combined_features` dibuat dengan menggabungkan informasi dari kolom `genres` dan `tag`, menggunakan tanda `|` sebagai pemisah. Tujuannya adalah untuk memudahkan pembuatan vektor fitur dari teks untuk analisis kesamaan, yang sangat penting dalam sistem rekomendasi berbasis konten. Hal ini membantu model dalam memahami dan membandingkan kompleksitas konten film dengan lebih efektif.
+   - Kolom `combined_features` dibuat dengan menggabungkan informasi dari kolom `genres` dan `tag` menggunakan tanda `|` sebagai pemisah.  
+   - Kolom ini digunakan untuk menghasilkan vektor fitur dari teks untuk analisis kesamaan menggunakan algoritma berbasis teks.  
 
 3. **Encoding untuk Collaborative Filtering**  
-   `userId` dan `movieId` diubah menjadi urutan angka berurutan menggunakan `.astype('category').cat.codes`. Proses ini juga mencakup pembuatan pemetaan ulang antara kode kategori dengan ID asli. Encoding ini menyederhanakan data dan mengurangi kompleksitas komputasional, memungkinkan algoritma collaborative filtering untuk lebih efisien dalam memproses data. Ini sangat penting untuk teknik embedding yang digunakan dalam model collaborative filtering, yang membutuhkan input numerik.
+   - Kolom `userId` dan `movieId` diubah menjadi tipe kategori dan dikonversi menjadi kode numerik berurutan menggunakan `.astype('category').cat.codes`.  
+   - Peta relasi antara kode numerik dan ID asli disimpan untuk mempermudah interpretasi hasil model.  
+   - Langkah ini bertujuan menyederhanakan data untuk algoritma collaborative filtering yang memerlukan input numerik.  
 
-4. **Pembagian Data untuk Training dan Validasi**  
-   Data dibagi menjadi set pelatihan dan validasi menggunakan `train_test_split`, dengan proporsi tertentu dialokasikan untuk validasi. Pembagian ini memastikan bahwa model dapat diuji pada data yang belum pernah dilihat sebelumnya, yang berguna untuk mengukur kemampuan model dalam memprediksi rating dengan akurat pada situasi nyata dan mengidentifikasi serta mengatasi overfitting.
+4. **Mengonversi Teks ke Vektor Fitur dengan TF-IDF**  
+   - TF-IDF (Term Frequency-Inverse Document Frequency) Vectorizer digunakan untuk mengubah kolom `combined_features` menjadi matriks fitur.  
+   - Hasil dari proses ini adalah matriks sparse yang mewakili setiap film dalam bentuk vektor, memungkinkan perhitungan kesamaan berbasis konten.  
+   - Parameter TF-IDF Vectorizer:  
+     - `max_features=5000`: Menggunakan maksimal 5000 fitur penting.  
+     - `stop_words='english'`: Menghapus kata-kata umum dalam bahasa Inggris yang tidak memiliki arti signifikan.  
 
-Setiap tahapan data preparation ini bertujuan untuk memastikan bahwa data yang digunakan dalam pemodelan sistem rekomendasi bersih, konsisten, dan siap untuk analisis lebih lanjut. Langkah-langkah ini dirancang untuk memaksimalkan efektivitas model rekomendasi, baik dalam pendekatan berbasis konten maupun collaborative filtering.
+5. **Pembagian Data untuk Training dan Validasi**  
+   - Dataset dibagi menjadi set pelatihan dan validasi menggunakan `train_test_split` dari pustaka `sklearn.model_selection` dengan parameter berikut:  
+     - `test_size=0.2`: 20% data digunakan untuk validasi.  
+     - `random_state=42`: Mengatur seed untuk memastikan konsistensi pembagian data.  
 
-## Modeling and Result
+Langkah-langkah ini memastikan bahwa data siap digunakan untuk kedua pendekatan sistem rekomendasi: content-based filtering dan collaborative filtering.  
 
-### **Model**
-Dalam eksperimen ini, dua model sistem rekomendasi dibuat untuk menangani permasalahan rekomendasi film kepada pengguna: Content-Based Filtering dan Collaborative Filtering.
+---
 
-1. **Content-Based Filtering**
-    - **Pembuatan Model**: Menggunakan TF-IDF Vectorizer untuk mengonversi `combined_features` menjadi matriks fitur dan menghitung cosine similarity antara film-film berdasarkan matriks tersebut. Sistem kemudian merekomendasikan film yang memiliki kesamaan konten tertinggi dengan film yang disukai pengguna.
-    - **Output**: Top-N rekomendasi disajikan berdasarkan skor kesamaan tertinggi.
-    - **Kelebihan**:
-        - Rekomendasi sangat personal dan relevan dengan preferensi spesifik pengguna berdasarkan konten.
-        - Sistem tetap efektif meskipun jumlah pengguna terbatas.
-    - **Kekurangan**:
-        - Terbatas pada konten yang mirip dengan yang sudah diketahui; dapat menghasilkan rekomendasi yang monoton.
-        - Tidak mempertimbangkan pendapat atau preferensi pengguna lain, yang bisa membatasi keragaman rekomendasi.
+## Modeling and Results
 
-2. **Collaborative Filtering**
-    - **Pembuatan Model**: Menggunakan teknik Deep Learning dengan TensorFlow dan Keras untuk membangun model yang memprediksi rating film berdasarkan histori interaksi antara pengguna dan film. Model memanfaatkan struktur embedding untuk pengguna dan film, serta menggunakan input dari `userId` dan `movieId`.
-    - **Output**: Sistem merekomendasikan Top-N film yang belum ditonton oleh pengguna berdasarkan prediksi rating tertinggi.
-    - **Kelebihan**:
-        - Mampu mengidentifikasi pola dan preferensi tersembunyi yang mungkin tidak terlihat dalam konten film itu sendiri, menawarkan rekomendasi yang lebih beragam.
-        - Dapat meningkat dengan penambahan data; semakin banyak interaksi yang dianalisis, semakin akurat rekomendasinya.
-    - **Kekurangan**:
-        - Memerlukan data yang cukup besar untuk pelatihan model agar efektif, yang dikenal sebagai masalah cold start.
-        - Kompleksitas komputasi lebih tinggi dibandingkan content-based filtering, membutuhkan sumber daya komputasi yang lebih besar.
+### **Content-Based Filtering**
 
-Kedua pendekatan memiliki tempatnya masing-masing dalam ekosistem rekomendasi. Pemilihan antara keduanya bergantung pada konteks aplikasi dan ketersediaan data:
-- **Content-Based Filtering** lebih cocok untuk aplikasi dengan konten yang sangat spesifik dan personalisasi mendalam sangat penting, atau ketika informasi tentang preferensi pengguna lebih mudah diakses daripada data interaksi pengguna lain.
-- **Collaborative Filtering** cocok untuk platform dengan banyak pengguna dan interaksi, di mana pola besar tersebut dapat dimanfaatkan untuk menghasilkan rekomendasi yang relevan dan beragam.
+- **Cara Kerja**:  
+  - Menggunakan cosine similarity untuk menghitung kesamaan antar film berdasarkan vektor TF-IDF yang dihasilkan dari `combined_features`.  
+  - Sistem merekomendasikan film yang memiliki skor kesamaan tertinggi dengan film pilihan pengguna.  
+- **Parameter yang Digunakan**:  
+  - **Metode Similarity**: Cosine similarity.  
+  - **Jumlah Rekomendasi**: Top-10 film dengan kesamaan tertinggi.  
+- **Keunggulan**:  
+  - Relevan dengan minat spesifik pengguna berdasarkan konten film.  
+  - Cocok untuk situasi di mana data pengguna lain terbatas.  
+- **Kelemahan**:  
+  - Rekomendasi cenderung monoton karena hanya berdasarkan konten serupa.  
+  - Tidak mempertimbangkan interaksi pengguna lain.  
 
-Dalam praktiknya, kombinasi keduanya sering kali memberikan hasil terbaik, menggabungkan kekuatan kedua pendekatan untuk mencapai rekomendasi yang personal, relevan, dan beragam.
+### **Collaborative Filtering**
 
+- **Cara Kerja**:  
+  - Model dibuat menggunakan TensorFlow dan Keras. Sistem memprediksi rating berdasarkan embedding pengguna dan film yang dilatih pada data pelatihan.  
+  - Rekomendasi diberikan berdasarkan prediksi rating tertinggi untuk film yang belum ditonton oleh pengguna.  
+- **Parameter Model**:  
+  - **Embedding Dimension**: 50.  
+  - **Optimizer**: Adam dengan learning rate 0.001.  
+  - **Loss Function**: Mean Squared Error (MSE).  
+  - **Epochs**: 10.  
+  - **Batch Size**: 64.  
+- **Keunggulan**:  
+  - Mampu menghasilkan rekomendasi yang beragam dengan mengidentifikasi pola interaksi pengguna.  
+  - Semakin efektif dengan bertambahnya data interaksi.  
+- **Kelemahan**:  
+  - Memerlukan data yang cukup besar untuk pelatihan.  
+  - Rentan terhadap masalah cold start untuk pengguna atau item baru.  
+
+
+### Hasil dan Evaluasi
+
+1. **Content-Based Filtering**:  
+   - Sistem berhasil memberikan rekomendasi berdasarkan konten dengan skor kesamaan tinggi.  
+   - Cocok untuk rekomendasi awal pada pengguna baru.  
+
+2. **Collaborative Filtering**:  
+   - Model menunjukkan performa yang lebih baik dalam hal keanekaragaman rekomendasi dibandingkan pendekatan berbasis konten.  
+   - Dapat meningkatkan personalisasi rekomendasi dengan lebih banyak data interaksi.  
+
+### Kesimpulan
+Content-based filtering cocok untuk personalisasi awal berdasarkan atribut film, sementara collaborative filtering lebih efektif untuk meningkatkan akurasi dan keragaman rekomendasi dalam platform dengan data interaksi yang cukup besar.
+
+---
 ### **Result**
 
 #### **Top-N Rekomendasi Content-Based Filtering**
@@ -225,7 +318,7 @@ Tabel 4. Top-N Rekomendasi Collaborative Filtering:
 | 3   | Wallace & Gromit: The Best of Aardman Animation    |
 | 4   | Iron Giant, The (1999)                             |
 | 5   | South Pacific (1958)                               |
-
+---
 ## Evaluation
 
 ### **Content-Based Filtering Evaluation**
@@ -234,23 +327,48 @@ Untuk model Content-Based Filtering, metrik **precision** digunakan untuk menguk
 
 ![equation](https://latex.codecogs.com/svg.image?Precision=%5Cfrac%7BJumlah%20Rekomendasi%20yang%20Relevan%7D%7BJumlah%20Total%20Rekomendasi%7D)
 
+Evaluasi ini bertujuan untuk menilai seberapa efektif sistem dalam memberikan rekomendasi yang sesuai dengan minat pengguna. 
+
+- **Dampak pada Business Understanding**:  
+  Content-Based Filtering mampu memberikan rekomendasi yang sangat personal dengan fokus pada film yang memiliki atribut serupa dengan preferensi pengguna. Hal ini menjawab tantangan dalam menyediakan rekomendasi awal yang relevan, terutama ketika data interaksi dengan pengguna lain masih terbatas.
+
+- **Hasil Evaluasi**:  
+  Precision yang tinggi menunjukkan model dapat memberikan rekomendasi yang relevan dan memenuhi sebagian dari problem statement, yaitu meningkatkan personalisasi rekomendasi.
+
 ### **Collaborative Filtering Evaluation**
 
-Untuk model Collaborative Filtering yang menggunakan TensorFlow dan Keras, **Mean Squared Error (MSE)** adalah metrik utama yang digunakan untuk mengukur akurasi prediksi model terhadap rating yang sebenarnya. MSE memberikan gambaran tentang seberapa besar kesalahan prediksi model dalam mengestimasi rating film, dengan fokus pada pengurangan kesalahan sepanjang proses pelatihan dan validasi.
+Model Collaborative Filtering menggunakan **Mean Squared Error (MSE)** untuk mengukur akurasi prediksi rating dibandingkan dengan nilai sebenarnya. Formula untuk MSE adalah:
 
-MSE dihitung dengan rumus berikut:
+![equation](https://latex.codecogs.com/svg.image?MSE=%5Cfrac%7B1%7D%7BD%7D%5Csum_%7Bi=1%7D%5E%7BD%7D(x_i-y_i)%5E2)
 
-![equation](https://latex.codecogs.com/svg.image?MSE=%5Csum_%7Bi=1%7D%5E%7BD%7D(x_i-y_i)%5E2)
+- **Dampak pada Business Understanding**:  
+  Collaborative Filtering mengatasi masalah personalisasi yang kurang optimal pada pendekatan berbasis konten dengan mempertimbangkan preferensi kolektif pengguna. Ini membantu mengurangi dampak masalah sparsity pada dataset dengan memanfaatkan hubungan antar pengguna untuk menemukan pola rekomendasi.
 
-Selama pelatihan, model dijalankan melalui beberapa epoch, di mana setiap epoch mencakup satu siklus melalui seluruh dataset pelatihan. RMSE dihitung untuk setiap batch data sebagai indikator kinerja model. Model bertujuan untuk meminimalkan RMSE dengan menyesuaikan bobot menggunakan backpropagation dan optimasi gradient descent. Hasil pelatihan divisualisasikan dalam grafik yang menunjukkan perubahan Training Loss dan Validation Loss, menggambarkan perbandingan RMSE selama pelatihan dan validasi. Grafik ini memberikan gambaran tentang:
+- **Hasil Evaluasi**:  
+  - **MSE**: Nilai MSE yang lebih rendah menunjukkan bahwa prediksi model semakin mendekati nilai sebenarnya.  
+  - **Training and Validation Loss**: Grafik visualisasi menunjukkan bahwa model berhasil mengurangi error selama pelatihan tanpa tanda-tanda overfitting.  
 
-- **Peningkatan Akurasi Prediksi**: Penurunan RMSE menunjukkan bahwa model semakin baik dalam memprediksi rating.
-- **Deteksi Overfitting**: Jika Validation Loss meningkat sementara Training Loss terus menurun, ini menandakan model overfitting dan performa pada data validasi mulai menurun.
+![hasil training dan validasi](img/train_val_vis.png)  
+*Gambar 5. Visualisasi metrik Training Loss dan Validation Loss*  
 
-![hasil training dan validasi](img/train_val_vis.png)
 
-Gambar 5. Visualisasi metrik training dan loss validasi
+### **Evaluasi Dampak terhadap Problem Statement dan Goals**
 
+- **Problem Statement**:  
+  Proyek ini berupaya mengatasi dua tantangan utama, yaitu **cold start** dan **sparsity**, serta meningkatkan akurasi dan personalisasi rekomendasi.  
+  - **Content-Based Filtering**: Efektif dalam memberikan rekomendasi awal kepada pengguna baru (mengatasi masalah cold start).  
+  - **Collaborative Filtering**: Lebih kuat dalam mengidentifikasi pola preferensi tersembunyi dan memberikan rekomendasi beragam untuk pengguna yang telah memiliki cukup data interaksi.  
+
+- **Pencapaian Goals**:  
+  - Meningkatkan personalisasi rekomendasi: **Tercapai** dengan Content-Based Filtering.  
+  - Mengatasi masalah sparsity: **Tercapai** dengan Collaborative Filtering.  
+
+- **Dampak Solusi Statement**:  
+  Kombinasi kedua pendekatan ini memberikan dampak yang signifikan terhadap pengalaman pengguna dan relevansi rekomendasi. Penggunaan Content-Based Filtering memberikan rekomendasi awal yang relevan, sedangkan Collaborative Filtering meningkatkan cakupan dan keberagaman rekomendasi seiring bertambahnya data interaksi.
+
+Proyek ini berhasil memberikan solusi yang menjawab problem statement, mencapai goals yang diharapkan, dan menghasilkan model sistem rekomendasi yang relevan dan berdampak positif pada pengalaman pengguna.
+
+---
 ### **Kesimpulan**
 
 Hasil evaluasi untuk model Content-Based Filtering menunjukkan nilai precision sempurna (1), yang berarti semua rekomendasi relevan. Meskipun ini menunjukkan keberhasilan model, potensi bias dalam evaluasi atau kurangnya variasi dalam skenario pengujian perlu dipertimbangkan.
@@ -261,6 +379,7 @@ Loss validasi yang mendekati loss pelatihan menunjukkan bahwa model dapat mengge
 
 Secara keseluruhan, proyek ini berhasil membangun dan mengevaluasi model rekomendasi berbasis Content-Based Filtering dan Collaborative Filtering menggunakan dataset MovieLens. Hasil analisis eksploratif membantu dalam pembuatan fitur dan pemahaman konten yang relevan dengan preferensi pengguna. Kedua model menunjukkan kemampuan dalam merekomendasikan film yang relevan kepada pengguna, dengan Content-Based Filtering efektif untuk film dengan konten serupa dan Collaborative Filtering mengidentifikasi film berdasarkan pola rating dari banyak pengguna.
 
+---
 
 ## Daftar Referensi
 [[1]] Orue-Saiz, M. Rico-González, J. Pino-Ortega, and A. Méndez-Zorrilla, "Improving diet through a recommendation system using physical activity data and healthy diet indexes of female futsal players," Proceedings of the Institution of Mechanical Engineers, Part P: Journal of Sports Engineering and Technology, vol. 0, no. 0, 2024.<br>
