@@ -198,35 +198,64 @@ Visualisasi dan daftar 20 tag paling populer pada Gambar 4 menunjukkan:
 ---
 ## Data Preparation
 
-Tahapan data preparation dalam eksperimen sistem rekomendasi menggunakan dataset MovieLens pada proyek ini mencakup langkah-langkah berikut untuk mempersiapkan dan memproses data sesuai kebutuhan analisis dan pemodelan:
+Tahapan ini bertujuan untuk mempersiapkan data agar siap digunakan dalam membangun model sistem rekomendasi berbasis konten (Content-Based Filtering) dan kolaboratif (Collaborative Filtering). Berikut adalah langkah-langkah yang dilakukan:
 
-1. **Menggabungkan Data Movies dengan Tags**  
-   - Data dari tabel `movies` dan `tags` digabungkan berdasarkan `movieId`.  
-   - Film yang tidak memiliki tag akan memiliki nilai kosong pada kolom `tag`. Nilai ini digantikan dengan string kosong (`""`).  
-   - Tujuan penggabungan ini adalah memperkaya informasi konten setiap film dengan tambahan data tag untuk mendukung sistem rekomendasi berbasis konten.  
+### **1. Menggabungkan Data Movies dengan Genre dan Tags**
+1. **Menggabungkan Tag Berdasarkan `movieId`**  
+   Setiap tag yang dimiliki oleh film yang sama digabungkan menjadi satu string menggunakan tanda `|` sebagai pemisah. Hal ini dilakukan untuk memperkaya informasi tentang film.  
+   ```python
+   tags_aggregated = tags.groupby('movieId')['tag'].apply(lambda x: '|'.join(x)).reset_index()
 
-2. **Membuat Kolom Combined Features**  
-   - Kolom `combined_features` dibuat dengan menggabungkan informasi dari kolom `genres` dan `tag` menggunakan tanda `|` sebagai pemisah.  
-   - Kolom ini digunakan untuk menghasilkan vektor fitur dari teks untuk analisis kesamaan menggunakan algoritma berbasis teks.  
+2. **Menggabungkan Tag dengan Data Film**
+Data dari tabel 'movies' dan 'tags_aggregated' digabungkan berdasarkan kolom 'movieId'. Film yang tidak memiliki tag akan memiliki nilai kosong pada kolom 'tag', yang kemudian diganti dengan string kosong '("")'.
+   ```python
+    movies_with_tags = pd.merge(movies, tags_aggregated, on='movieId', how='left')
+    movies_with_tags['tag'].fillna('', inplace=True)
 
-3. **Encoding untuk Collaborative Filtering**  
-   - Kolom `userId` dan `movieId` diubah menjadi tipe kategori dan dikonversi menjadi kode numerik berurutan menggunakan `.astype('category').cat.codes`.  
-   - Peta relasi antara kode numerik dan ID asli disimpan untuk mempermudah interpretasi hasil model.  
-   - Langkah ini bertujuan menyederhanakan data untuk algoritma collaborative filtering yang memerlukan input numerik.  
+## **2. Membuat Kolom Combined Features**
+Kolom `combined_features` dibuat dengan menggabungkan kolom `genres` dan `tag` menggunakan tanda `|` sebagai pemisah. Kolom ini digunakan untuk menghitung kesamaan antar film dalam model berbasis konten. <br>
 
-4. **Mengonversi Teks ke Vektor Fitur dengan TF-IDF**  
-   - TF-IDF (Term Frequency-Inverse Document Frequency) Vectorizer digunakan untuk mengubah kolom `combined_features` menjadi matriks fitur.  
-   - Hasil dari proses ini adalah matriks sparse yang mewakili setiap film dalam bentuk vektor, memungkinkan perhitungan kesamaan berbasis konten.  
-   - Parameter TF-IDF Vectorizer:  
-     - `max_features=5000`: Menggunakan maksimal 5000 fitur penting.  
-     - `stop_words='english'`: Menghapus kata-kata umum dalam bahasa Inggris yang tidak memiliki arti signifikan.  
+### **3. Encoding untuk Collaborative Filtering**
+1. **Mengonversi `userId` dan `movieId` Menjadi Kode Numerik**
+Kolom `userId` dan `movieId` diubah menjadi tipe kategori, kemudian dikonversi menjadi kode numerik berurutan. Langkah ini bertujuan untuk menyederhanakan data sehingga lebih mudah diproses oleh algoritma.
+    ```python
+    ratings['userId'] = ratings['userId'].astype('category').cat.codes
+    ratings['movieId'] = ratings['movieId'].astype('category').cat.codes
 
-5. **Pembagian Data untuk Training dan Validasi**  
-   - Dataset dibagi menjadi set pelatihan dan validasi menggunakan `train_test_split` dari pustaka `sklearn.model_selection` dengan parameter berikut:  
-     - `test_size=0.2`: 20% data digunakan untuk validasi.  
-     - `random_state=42`: Mengatur seed untuk memastikan konsistensi pembagian data.  
+2. **Menghitung Jumlah Pengguna dan Film**
+Menggunakan .nunique() untuk mendapatkan jumlah elemen unik pada setiap kolom:
+    ```python
+    num_users = ratings['userId'].nunique()
+    num_movies = ratings['movieId'].nunique()
 
-Langkah-langkah ini memastikan bahwa data siap digunakan untuk kedua pendekatan sistem rekomendasi: content-based filtering dan collaborative filtering.  
+### **4. Mengonversi Teks ke Vektor Fitur Menggunakan TF-IDF**
+TF-IDF Vectorizer digunakan untuk mengubah kolom combined_features menjadi matriks fitur. Parameter yang digunakan:
+- max_features=5000: Menggunakan maksimal 5000 fitur penting.
+- stop_words='english': Menghapus kata-kata umum dalam bahasa Inggris.
+    ```python
+      from sklearn.feature_extraction.text import TfidfVectorizer
+      
+      tfidf_vectorizer = TfidfVectorizer(max_features=5000, stop_words='english')
+      tfidf_matrix = tfidf_vectorizer.fit_transform(movies_with_tags['combined_features'])
+
+### **5. Pembagian Data untuk Training dan Validasi**
+Dataset dibagi menjadi set pelatihan dan validasi untuk Collaborative Filtering.
+
+- Input (X): Pasangan userId dan movieId.
+- Target (y): Rating film.
+- Pembagian: 80% data untuk pelatihan, 20% untuk validasi.
+    ```python
+      from sklearn.model_selection import train_test_split
+      
+      X = ratings[['userId', 'movieId']].values
+      y = ratings['rating'].values
+      X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+Tahapan ini memastikan bahwa data siap digunakan untuk membangun kedua jenis model rekomendasi:
+
+- **Content-Based Filtering** menggunakan kolom combined_features.
+- **Collaborative Filtering** menggunakan pasangan userId dan movieId yang telah dikodekan.
+
 
 ---
 
@@ -366,7 +395,34 @@ Model Collaborative Filtering menggunakan **Mean Squared Error (MSE)** untuk men
 - **Dampak Solusi Statement**:  
   Kombinasi kedua pendekatan ini memberikan dampak yang signifikan terhadap pengalaman pengguna dan relevansi rekomendasi. Penggunaan Content-Based Filtering memberikan rekomendasi awal yang relevan, sedangkan Collaborative Filtering meningkatkan cakupan dan keberagaman rekomendasi seiring bertambahnya data interaksi.
 
-Proyek ini berhasil memberikan solusi yang menjawab problem statement, mencapai goals yang diharapkan, dan menghasilkan model sistem rekomendasi yang relevan dan berdampak positif pada pengalaman pengguna.
+### **Identifikasi Faktor yang Mempengaruhi Efektivitas Metode Rekomendasi**
+
+Faktor-faktor yang mempengaruhi efektivitas kedua metode rekomendasi ini dapat dianalisis sebagai berikut:
+
+#### **Content-Based Filtering:**
+
+- **Keakuratan Atribut Film**:  
+  Efektivitas metode ini sangat bergantung pada kualitas dan kelengkapan data atribut film (genre, tag, dll). Jika informasi ini tidak lengkap atau tidak akurat, rekomendasi bisa menjadi kurang relevan.
+
+- **Preferensi Pengguna**:  
+  Kemampuan sistem dalam memahami minat pengguna dari film yang telah dilihatnya sebelumnya berperan penting. Sistem ini bekerja dengan baik ketika data interaksi pengguna tersedia.
+
+- **Cold Start Problem**:  
+  Metode ini efektif untuk pengguna baru yang belum memiliki cukup data interaksi, karena bisa mengandalkan informasi atribut film untuk menghasilkan rekomendasi.
+
+#### **Collaborative Filtering:**
+
+- **Volume Data Interaksi**:  
+  Semakin banyak data rating dan interaksi antara pengguna dengan film, semakin baik performa Collaborative Filtering. Metode ini sangat bergantung pada data yang cukup untuk memetakan hubungan antar pengguna dan film.
+
+- **Sparsity**:  
+  Pada dataset yang memiliki sedikit interaksi antar pengguna dan film (sparity), Collaborative Filtering bisa kesulitan untuk memberikan rekomendasi yang baik, meskipun hal ini dapat diatasi dengan teknik seperti matrix factorization.
+
+- **Overfitting**:  
+  Salah satu tantangan dalam Collaborative Filtering adalah risiko overfitting ketika model terlalu menyesuaikan diri dengan data pelatihan. Oleh karena itu, pengaturan regularisasi dan teknik validasi yang baik sangat penting.
+
+Kombinasi kedua pendekatan ini membantu mengatasi kelemahan masing-masing, yaitu memberikan rekomendasi yang lebih personal dengan Content-Based Filtering dan meningkatkan keberagaman rekomendasi dengan Collaborative Filtering.
+
 
 ---
 ### **Kesimpulan**
